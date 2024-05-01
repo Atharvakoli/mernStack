@@ -15,7 +15,6 @@ const Login = () => {
     username: "",
     password: "",
   });
-  const [errors, setErrors] = useState("");
   const user = loginList?.data?.user?.username;
   const message = loginList?.message;
   const success = loginList?.success;
@@ -23,25 +22,12 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await loginUser(formData);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
-      setFormData({
-        username: "",
-        password: "",
-      });
-    } catch (error) {
-      setErrors(
-        `An error occurred during User Login Error: ${loginError.message}`
-      );
-    }
-    const hasErrors = Object.values(loginError).some(
-      (errorsMsg) => errorsMsg !== ""
-    );
-    if (hasErrors) {
-      setErrors(`An error occurred during User Login, ${loginError.message}`);
-      return;
-    }
+    await loginUser(formData);
+    axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+    setFormData({
+      username: "",
+      password: "",
+    });
   };
 
   const handleChange = (e) => {
@@ -56,13 +42,11 @@ const Login = () => {
     <Loader size={50} />
   ) : (
     <form className="my-6" onSubmit={handleSubmit}>
-      {errors ||
-        (refreshTokenError && (
-          <p className={`text-red-500 ${user ? "hidden" : "flex"} `}>
-            {errors}
-            {loginError?.message}
-          </p>
-        ))}
+      {loginError?.message ? (
+        <p className={`text-red-500 ${user ? "hidden" : "flex"} `}>
+          {loginError?.message}
+        </p>
+      ) : null}
       <input
         className="p-2 my-2 rounded w-[100%] focus:outline-blue-600"
         placeholder="Username..."
@@ -99,7 +83,7 @@ const Login = () => {
         {content}
         <div className="flex justify-between  items-center w-full">
           <div>
-            {errors ? (
+            {loginError.message === "Request failed with status code 404" ? (
               <Link
                 to="/register"
                 className="text-md text-green-500 hover:underline"

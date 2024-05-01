@@ -60,7 +60,7 @@ export default function AuthState({ children }) {
       setLocalStorage(data);
       setLoginList(data);
       setLoginLoading(false);
-      const expiredToken = JSON.parse(atob(token.split(".")[1]));
+      const expiredToken = JSON.parse(atob(accessToken.split(".")[1]));
       tokenRefreshExpiry(expiredToken.exp * 1000);
       axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
     } catch (e) {
@@ -142,13 +142,12 @@ export default function AuthState({ children }) {
         setLogoutList(data);
         axios.defaults.headers.common[
           "Authorization"
-        ] = `Bearer ${data.data.accessToken}`;
-        token = data.data.accessToken;
+        ] = `Bearer ${data?.data?.accessToken}`;
+        let token = data?.data?.accessToken;
         if (token) {
           const expiredToken = JSON.parse(atob(token.split(".")[1]));
           if (expiredToken.exp * 1000 > Date.now()) {
             tokenRefreshExpiry(expiredToken.exp * 1000);
-            alert("Token as Expired");
           } else {
             removeLocalStorage();
           }

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { AiOutlineCheck } from "react-icons/ai";
 import { IoIosArrowDown } from "react-icons/io";
 import { FeatureContext } from "../context/FeaturesSystem";
@@ -46,6 +46,25 @@ const TimeTable = () => {
       ...selected,
       [name]: value,
     });
+  };
+
+  useEffect(() => {
+    const getAllTimetable = async () => {
+      await getTimetable();
+    };
+    getAllTimetable();
+  }, []);
+
+  const data = { ...allTimetableList };
+  const timetableData = data?.data;
+
+  const handleStudentToDelete = async (id) => {
+    await deleteTimetable(id);
+    const data = timetableData.filter((item) => item._id !== id);
+    setAllTimetableList((prevData) => ({
+      ...prevData,
+      data,
+    }));
   };
 
   return (
@@ -299,14 +318,15 @@ const TimeTable = () => {
                         <th className="pb-3 pr-1 text-start min-w-[30px]">
                           Sr No.
                         </th>
-                        <th className="pb-3 pr-1 text-start min-w-[30px]">
-                          Enroll No.
-                        </th>
-                        <th className="pb-3 text-center min-w-[30px]">
-                          Remark Message
+                        <th className="pb-3 text-center min-w-[30px]">Title</th>
+                        <th className="pb-3 text-center min-w-[130px] ">
+                          courseName
                         </th>
                         <th className="pb-3 text-center min-w-[130px] ">
-                          Date
+                          year
+                        </th>
+                        <th className="pb-3 text-center min-w-[130px] ">
+                          description
                         </th>
                         <th className="pb-3 pr-12 text-center min-w-[135px]">
                           Delete
@@ -314,31 +334,61 @@ const TimeTable = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr className="border-b font-thin text-sm border-dashed last:border-b-0">
-                        <td className="p-3 pl-0">
-                          <div className="flex items-center">
-                            student.rollNo
-                          </div>
-                        </td>
-                        <td className="p-3 pl-0">
-                          <div className="flex items-center">
-                            student.studentsName
-                          </div>
-                        </td>
-                        <td className="p-3 pr-0 text-center">
-                          <span className="font-semibold text-light-inverse text-md/normal">
-                            student.surName
-                          </span>
-                        </td>
-                        <td className="p-3 pl-0">
-                          <div className="text-center ">student.courseName</div>
-                        </td>
-                        <td className="p-3 pr-0 text-center">
-                          <span className="font-semibold text-light-inverse text-md/normal">
-                            student.year
-                          </span>
-                        </td>
-                      </tr>
+                      {timetableData &&
+                        timetableData.map((data) => (
+                          <tr className="border-b font-thin text-sm border-dashed last:border-b-0">
+                            <td className="p-3 pl-0">
+                              <div className="flex items-center">1</div>
+                            </td>
+                            <td className="p-3 pl-0">
+                              <div className="flex items-center">
+                                {data.addTitle}
+                              </div>
+                            </td>
+                            <td className="p-3 pl-0">
+                              <div className="flex items-center">
+                                {data.courseName}
+                              </div>
+                            </td>
+                            <td className="p-3 pr-0 text-center">
+                              <span className="font-semibold text-light-inverse text-md/normal">
+                                {data.year}
+                              </span>
+                            </td>
+                            <td className="p-3 pl-0">
+                              <div className="text-center ">
+                                {data.addDescription}
+                              </div>
+                            </td>
+                            <td className="p-3 pr-0 text-center">
+                              <span className="font-semibold text-light-inverse text-md/normal">
+                                <li className="flex items-center justify-center gap-1 cursor-pointer relative group">
+                                  <button className="relative h-10 w-48 overflow-hidden rounded-xl bg-green-500 text-sm font-bold text-white sm:text-lg mt-5">
+                                    DELETE
+                                    <div className="absolute inset-0 h-full w-full scale-0 rounded-2xl transition-all duration-300 group-hover:scale-100 group-hover:bg-white/30"></div>
+                                  </button>
+                                  <div className="absolute shadow-lg rounded-md p-2 z-50 hidden group-hover:block text-black bg-white w-[200px] border">
+                                    <ul className="text-center">
+                                      <li className="p-2 text-xs">
+                                        Are you sure want to Delete
+                                      </li>
+                                      <button
+                                        type="submit"
+                                        className="group relative h-10 w-48 overflow-hidden rounded-xl bg-green-500 text-sm font-bold text-white sm:text-lg mt-5"
+                                        onClick={() =>
+                                          handleStudentToDelete(data._id)
+                                        }
+                                      >
+                                        Yes
+                                        <div className="absolute inset-0 h-full w-full scale-0 rounded-2xl transition-all duration-300 group-hover:scale-100 group-hover:bg-white/30"></div>
+                                      </button>
+                                    </ul>
+                                  </div>
+                                </li>
+                              </span>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>

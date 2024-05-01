@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { GiArchiveRegister } from "react-icons/gi";
+import { GiArchiveRegister, GiCogLock } from "react-icons/gi";
 import Loader from "../components/Loader";
 import { AuthContext } from "../context/AuthSystem";
 import { FaArrowRightFromBracket } from "react-icons/fa6";
@@ -22,7 +22,9 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      registerUser(formData);
+      if (errorsMsg.username === "" && errorsMsg.password === "") {
+        await registerUser(formData);
+      }
       setFormData({
         username: "",
         password: "",
