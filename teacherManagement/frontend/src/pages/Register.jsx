@@ -12,6 +12,8 @@ const Register = () => {
     password: "",
   });
 
+  console.log(registerError.message);
+
   const message = registerList?.message;
   const success = registerList?.success;
   const user = registerList?.data?.user;
